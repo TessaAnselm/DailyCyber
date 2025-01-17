@@ -1,10 +1,6 @@
 ## Hi there 👋
 
 <!--
-**TessaAnselm/TessaAnselm** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
 - 🔭 This repo is daily stuff explored in cybersecurity.
 - 🌱 I’be been exploring cybersecurity for over 2 years and decided to journal content reviewed.
 - 👯 I’m always open to collaborate on cybersecurity projects, pentesting or solve CPT together.
