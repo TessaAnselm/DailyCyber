@@ -1,0 +1,103 @@
+📅 Date: January 16, 2025
+
+🔒 Cryptography Project with CrypTool 2 (CCSF)
+🚨 Spoiler Alert: If you are a CCSF student, this document contains project references and solutions.
+
+📌 Project Links
+	•	Caesar Cipher with CrypTool 2 (https://samsclass.info/141/proj/C102.htm)
+	•	Monoalphabetic Substitution Cipher with CrypTool 2 (https://samsclass.info/141/proj/C103.htm)
+
+
+💻 Setting Up CrypTool 2
+
+For this project, I downloaded CrypTool 2 and ran it inside a Windows Virtual Machine (VM).
+I found that Quipqiup and CyberChef offered faster decryption methods.
+
+🔹 Project 102: Caesar Cipher Decryption
+
+🛠️ Approach
+
+CrypTool 2 was able to decrypt 102.1 using standard frequency analysis.
+For 102.2 and 102.3, I used CyberChef’s ROT13 Brute Force tool.
+
+🔢 102.2: ROT15 Decryption
+
+Ciphertext:
+ESP BFTNV MCZHY QZI UFXAD ZGPC ESP WLKJ OZR.
+
+Plaintext:
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
+
+Check result in CyberChef:
+(Rotate 15 provided plaintext)
+https://gchq.github.io/CyberChef/#recipe=ROT13_Brute_Force(true,true,false,100,0,true,'')&input=RVNQIEJGVE5WIE1DWkhZIFFaSSBVRlhBRCBaR1BDIEVTUCBXTEtKIE9aUi4 
+
+🔢 102.3: ROT17 Decryption
+
+Ciphertext:
+AXLT VN KJKH, AXLT VN JUU WRPQC UXWP
+
+Plaintext:
+ROCK ME BABY, ROCK ME ALL NIGHT LONG.
+
+Check result in CyberChef:
+(Rotate 17 provided plaintext)
+https://gchq.github.io/CyberChef/#recipe=ROT13_Brute_Force(true,true,false,100,0,true,'')&input=QVhMVCBWTiBLSktILCBBWExUIFZOIEpVVSBXUlBRQyBVWFdQ
+
+******************
+
+🔹 Project 103: Monoalphabetic Substitution Cipher
+
+For Project 103, I used Quipquip for initial analysis, then refined substitutions using CyberChef.
+
+🔢 103.1: Substitution Cipher
+
+Ciphertext:
+B WBGG HUBGD T AQOTS WTGG -- TJD JKHKDY HUBGDR WTGGR HOSSOQ SLTJ IO, HOGBOVO IO -- TJD B'GG HUBGD SLOI VOQY BJOXMOJRBVOGY.
+
+Plaintext:
+I WILL BUILD A GREAT WALL -- AND NOBODY BUILDS WALLS BETTER THAN ME, BELIEVE ME -- AND I'LL BUILD THEM VERY INEXPENSIVELY.
+
+Check result in CyberChef:
+https://gchq.github.io/CyberChef/#recipe=Substitute('ABCDEFGHIJKLMNOPQRSTUVWXYZ','GICDCKLBMNOHPFEPRSTAUVWXYZ',true)&input=QiBXQkdHIEhVQkdEIFQgQVFPVFMgV1RHRyAtLSBUSkQgSktIS0RZIEhVQkdEUiBXVEdHUiBIT1NTT1EgU0xUSiBJTywgSE9HQk9WTyBJTyAtLSBUSkQgQidHRyBIVUJHRCBTTE9JIFZPUVkgQkpPWE1PSlJCVk9HWS4gQiBXQkdHIEhVQkdEIFQgQVFPVFMsIEFRT1RTIFdUR0cgS0ogS1VRIFJLVVNMT1FKIEhLUURPUSwgVEpEIEIgV0JHRyBJVEZPIElPWEJFSyBNVFkgTktRIFNMVFMgV1RHRy4gSVRRRiBJWSBXS1FEUi4
+
+🔢 103.2: Substitution Cipher
+
+Ciphertext:
+BFNKTAB TM BDD BLHQP MINNR. SHP, GBMPX, LBR-BMM MINNR.
+
+Plaintext:
+AMERICA IS ALL ABOUT SPEED. NOT, HASTY, BAD-ASS SPEED.
+
+Check result in CyberChef:
+https://gchq.github.io/CyberChef/#recipe=Substitute('ABCDEFGHIJKLMNOPQRSTUVWXYZ','CACLEMHOPJRBSEOTUDNIUVWYYYZ',true)&input=QkZOS1RBQiBUTSBCREQgQkxIUVAgTUlOTlIuIFNIUCwgR0JNUFgsIExCUi1CTU0gTUlOTlIu
+
+******************
+
+⚠️ Docker Malware Block Issue (Mac)
+
+While working on this project, I encountered a malware warning related to com.docker.vmnted on macOS.
+According to Bleeping Computer, this is a false positive.
+(https://www.bleepingcomputer.com/news/security/docker-desktop-blocked-on-macs-due-to-false-malware-alert/#:~:text=Bill%20Toulas&text=Docker%20is%20warning%20that%20Docker,reads%20the%20alert%20on%20Macs.&text=The%20vendor%20clarified%20that%20the,failure%20in%20file%20integrity%20checks)
+
+🔧 Fix It Using This Guide: Dev.to Article
+(https://dev.to/saanchitapaul/attention-docker-users-on-mac-2m8e)
+
+🕵️ System Analysis: Checking Startup Processes
+
+To check which processes run at startup, use:
+
+launchctl list
+
+To check system daemons:
+
+ls -la /Library/LaunchDaemons/
+
+🎯 Final Thoughts
+	•	CrypTool 2 is useful but CyberChef & Quipquip were much more efficient.
+	•	Docker malware warning was a false positive but led me to investigate startup processes.
+	•	This project improved my understanding of frequency analysis, brute force, and substitution ciphers.
+
+📌 Next Steps:
+	•	Try breaking more complex ciphers.
+	•	Explore Python for automating cryptanalysis.
