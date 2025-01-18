@@ -1,0 +1,119 @@
+📅 Date: January 16, 2025
+WebGoat Exploration & SQL Injection Challenges
+
+Last year, I worked with PortSwigger Academy, a free platform that helped me get started with Burp Suite and practicing MITM (Man-in-the-Middle) attacks. If you’re interested, check out their site:  https://portswigger.net/web-security.
+
+Today, let’s explore OWASP WebGoat, a purposely vulnerable application designed for security training.
+
+⚠️ Important Warning:
+
+🚨 WebGoat is intentionally insecure! Before running it, read the instructions carefully and ensure your system is isolated or properly secured to avoid potential attacks.
+
+📌 Official WebGoat GitHub Repository:
+WebGoat on GitHub
+
+Downloading & Running WebGoat on Kali Linux
+
+To download the standalone WebGoat version, run the following command in the terminal:
+
+wget https://github.com/WebGoat/WebGoat/releases/download/v2023.8/webgoat-2023.8.jar
+
+To run WebGoat in the background, use:
+
+java -Dfile.encoding=UTF-8 -jar webgoat-2023.8.jar &
+
+Once it’s running, open a browser and create an account.
+
+SQL Injection Challenges
+
+WebGoat provides multiple security challenges. I focused on SQL Injection, covering DML (Data Manipulation Language), DDL (Data Definition Language), and DCL (Data Control Language) concepts.
+
+🛠 Challenge 2: SQL Injection Warm-Up
+
+Query:
+
+SELECT * FROM employees WHERE last_name = 'Franco';
+
+🛠 Challenge 3: DML (Data Manipulation Language)
+
+Query:
+
+UPDATE employees SET department = 'Sales' WHERE last_name = 'Barnett';
+
+🛠 Challenge 4: DDL (Data Definition Language)
+
+Query:
+
+ALTER TABLE employees ADD COLUMN phone VARCHAR(20);
+
+🛠 Challenge 5: DCL (Data Control Language)
+
+Query:
+
+GRANT ALL PRIVILEGES ON grant_rights TO unauthorized_user;
+
+🛠 Challenge 6: Practicing SQL Injection
+
+Below are some common SQL injection payloads:
+
+' OR '1' = '1
+' OR 1 = 1; --
+'; DROP TABLE users; TRUNCATE audit_log; --
+
+🛠 Challenge 7: Consequences of SQL Injection
+
+Understanding how SQL injection can lead to data leaks, privilege escalation, and unauthorized access.
+
+🛠 Challenge 8: Severity of SQL Injection
+
+SQL Injection is widely exploited in vulnerable web applications written in PHP, ASP, ColdFusion, and other frameworks.
+
+🛠 Challenge 9: Fill in the form, respectively: ', or, '1'='1
+
+🛠 Challenge 10: Exploiting userid Field
+
+Identifying and exploiting a field that is susceptible to SQL injection.
+
+OWASP Resources & Tools 🛠
+
+OWASP provides many valuable resources for web application security. Here are some useful tools and guides:
+
+📌 Application Security Verification Standard (ASVS)
+🔗 https://owasp.org/www-project-application-security-verification-standard/
+
+📌 CSRF Protection
+🔗 https://owasp.org/www-project-csrfguard/
+
+📌 OWASP Cheat Sheet Series
+🔗 https://github.com/OWASP/CheatSheetSeries
+
+📌 DefectDojo – Application Vulnerability Management
+🔗 https://owasp.org/www-project-defectdojo/
+
+📌 OWASP Secure Coding Practices – Quick Reference Guide
+🔗 https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
+
+📌 Dependency Security Tools
+	•	https://owasp.org/www-project-dependency-check/
+	•	https://owasp.org/www-project-dependency-track/
+
+📌 Java Security
+	•	https://owasp.org/www-project-enterprise-security-api/
+	•	https://owasp.org/www-project-java-html-sanitizer/
+
+📌 OWASP Testing & Training Labs
+	•	Juice Shop (Deliberately Vulnerable App): https://owasp.org/www-project-juice-shop/
+	•	OWTF – Offensive Web Testing Framework: https://owasp.org/www-project-owtf/
+	•	Security Shepherd: https://github.com/OWASP/SecurityShepherd
+	•	Web Security Testing Guide: https://owasp.org/www-project-web-security-testing-guide/
+
+📌 OWASP ZAP (Zed Attack Proxy) – Automated Web Security Scanner
+🔗 https://www.zaproxy.org/
+
+Conclusion
+
+Practicing SQL Injection attacks in a controlled environment like WebGoat helps improve web security skills. The vulnerabilities found in real-world applications can be prevented using parameterized queries, input validation, and proper access control.
+
+If you’re learning about offensive security, I highly recommend using OWASP tools and resources to deepen your understanding.
+
+🔹 Next Steps: Try more WebGoat challenges and analyze real-world SQL Injection vulnerabilities in CTFs and bug bounty programs. 🚀
