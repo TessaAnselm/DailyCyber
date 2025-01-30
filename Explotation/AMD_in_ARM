@@ -1,0 +1,49 @@
+32 bit in ARM
+
+To run 32-bit programs on ARM, a common hurdle is setting up a suitable environment. One solution is to install Debian (x86/amd64) on UTM. You can follow the detailed instructions provided below found from: https://samsclass.info/127/proj/LocalDebian12.htm
+
+Tools Required to Compile 32-bit Programs:
+Run the following command to install the necessary packages. This will install essential tools like GCC (with multilib support) and GDB to compile and debug 32-bit programs.
+sudo apt install build-essential gcc-multilib gdb -y  
+
+Emulated Intel Processor on Mac M1 or Later
+If you are using a Mac M1 machine, you cannot use the process below because you have the newer ARM processor.
+Instead, do these things:
+First, install UTM.
+Then, go to this page: Installing Debian via the Internet. In the "Small CDs or USB sticks", download the amd64 ISO file.
+Creating an Emulated AMD64 Machine
+Launch UTM and do these steps:
+* Click File, New, Emulate, Linux
+* On the Boot Image Type page, in the "Boot ISO Image" section, click the Browse button.
+* Navigate to the Debian arm64 ISO file you downloaded. Click the Continue button.
+* On the Hardware page, click Continue
+* On the Storage page, click Continue
+* On the Shared Directory page, click Continue
+* On the Summary page, enter a name of "AMD64 Linux" and click Save
+* Click the large right-arrow to launch the VM.
+Installing Debian Linux
+Note: this process will probably take an hour or more.
+* At the first screen, accept the default selection of "Graphical Install" and press Enter.
+* At the "Select a language" screen, accept the default selection and click the Continue button.
+* At the "Select your location" screen, accept the default selection of "United States" and click the Continue button.
+* At the "Configure the keyboard" screen, accept the default selection of "American English" and click the Continue button.
+* At the "Please enter the hostname for this system" screen, accept the default Hostname of "debian" and click the Continue button.
+* At the "Domain name" screen, leave the domain name blank and click the Continue button.
+* At the "Set up users and passwords" screen, enter a root password of P@ssw0rd in both boxes and click the Continue button.
+* At the next screen, enter a Full Name of student and click the Continue button.
+* At the next screen, accept the default name of student and click the Continue button.
+* At the next screen, enter a password of P@ssw0rd in both boxes and click the Continue button.
+* At the "Configure the clock" screen, select Pacific and click the Continue button.
+* At the "Partition disks" screen, accept the default selection of "Guided - use entire disk" and click the Continue button.
+* At the next screen, accept the default selection of "SCSI2..." and click the Continue button.
+* At the next screen, accept the default selection of "All files in one partition..." and click the Continue button.
+* At the next screen, accept the default selection of "SCSI2..." and click the Continue button.
+* At the next screen, accept the default selection of "Finish partitioning..." and click the Continue button.
+* At the next screen, select Yes and click the Continue button.
+* At the "Configure the package manager" screen, accept the default selection of "No" and click the Continue button.
+* At the next screen, accept the default selection of "United States" and click the Continue button.
+* At the next screen, accept the default selection and click the Continue button.
+* At the next screen, leave the HTTP proxy blank and click the Continue button.
+* At the "Configuring popularity-contest" screen, accept the default selection of "No" and click the Continue button.
+* At the "Software selection" screen, clear the checkmarks for "Debian desktop environment" and "GNOME". Check "SSh server". Leave "standard system utilities" checked and click the Continue button.
+When the "Finish the installation" screen appears, move your mouse to the top right portion of the UTM window and click the tiny CD icon.
