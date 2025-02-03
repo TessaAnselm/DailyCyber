@@ -1,0 +1,200 @@
+Project Link: https://samsclass.info/141/proj/C105a.htm
+The One-Time Pad (OTP) is one of the most secure encryption methods when used correctly. However, it becomes vulnerable if the same key is reused—this scenario is known as the Two-Time Pad. A historical example includes Russia’s cryptographic failure during World War II, which compromised their encrypted messages due to key reuse.
+
+This project explores how key reuse in OTP encryption exposes vulnerabilities and allows attackers to recover plaintexts using techniques like crib dragging.
+
+C105.1: The following are script used the encrypt and decrypt. Running the script, the results yield the decrypted text.
+
+Encryptian Script:
+
+key = "Unbreakable awesome secret secure system"
+plaintext = "Four score and seven"
+
+i = 0
+ciphertext = ""
+for p in plaintext:
+    ip = ord(p)
+    k = key[i % len(key)]  # Handles key shorter than plaintext
+    ik = ord(k)
+    inew = ip ^ ik
+    ciphertext += chr(inew)
+    i += 1
+
+# Display ciphertext in hex format
+ciphertext_hex = ciphertext.encode("ascii").hex()
+print("Ciphertext (Hex):", ciphertext_hex)
+
+*******************************
+
+Decryptian Process:
+key = "Unbreakable awesome secret secure system"
+ciphertext_hex = "130117004512080e100945410f1345000a1b004e"
+
+ciphertext = bytes.fromhex(ciphertext_hex)
+
+i = 0
+decrypted_text = ""
+for c in ciphertext:
+    k = key[i % len(key)]
+    ik = ord(k)
+    ip = c ^ ik
+    decrypted_text += chr(ip)
+    i += 1
+
+print("Decrypted Text:", decrypted_text)
+
+***********************************
+
+C105.2-4: The crib drag attack is a technique where you guess parts of the plaintext to recover the encryption key. By randomly choosing the word "the" several time as a guess for the key, we can obtain plaintext guesses. The following was the given script to make a guess:
+c1 = bytes.fromhex("1a0d134503550e0a1d4542071f56")
+c2 = bytes.fromhex("0d0710071d19490d0e5607004f00074e47")
+key = "The..............................................."
+
+while(True):
+ i = 0
+ p1 = ""
+ for c in c1:
+  k = key[i]
+  ik = ord(k)
+  ip = c ^ ik
+  p = chr(ip)
+  p1 += p
+  i += 1
+
+ i = 0
+ p2 = ""
+ for c in c2:
+  k = key[i]
+  ik = ord(k)
+  ip = c ^ ik
+  p = chr(ip)
+  p2 += p
+  i += 1
+ print()
+ print("     012345678901234567890123456789")
+ print("Key:", key)
+ print("P1 :", p1)
+ print("P2 :", p2)
+
+ thing = input("What to guess (k, 1, 2):")
+ char = int(input("Which character?"))
+ val = input("value:")
+ if thing == "k":
+   key = key[0:char] + val + key[char+1:]
+ if thing == "1":
+   c = c1[char]
+   k = c^ord(val)
+   key = key[0:char] + chr(k) + key[char+1:]
+ if thing == "2":
+   c = c2[char]
+   k = c^ord(val)
+   key = key[0:char] + chr(k) + key[char+1:]
+*******************
+
+Here's modified version of the scipt I created using chatGPT. This script is an interactive XOR decryption tool designed to perform cryptanalysis on two ciphertexts encrypted with the same key (a violation of the One-Time Pad (OTP) principle). The script allows the user to iteratively guess parts of the plaintext, refine key guesses, and recover both plaintexts.
+
+import string
+import sys  # Import sys to enable a complete program exit
+
+# Common words to predict key continuation
+COMMON_WORDS = ["The", "and", "for", "that", "this", "there", "they", "think", "them", "then"]
+
+def xor_bytes(a, b):
+    """ XOR two byte sequences """
+    return bytes(x ^ y for x, y in zip(a, b))
+
+def decrypt_with_key(ciphertext, key):
+    """ XOR decrypt using a given key guess """
+    return "".join(chr(c ^ k) if k != 0 else "." for c, k in zip(ciphertext, key))
+
+def start_xor_decryption(same_ciphertexts=False):
+    """ Function to start or continue the XOR decryption process """
+    global ciphertext1, ciphertext2, key_guess
+
+    print("\n🔹 **XOR Decryption Interactive Tool**")
+
+    # If not reusing ciphertexts, prompt for new ones
+    if not same_ciphertexts:
+        ciphertext1_hex = input("Enter first ciphertext (hex): ").strip()
+        ciphertext2_hex = input("Enter second ciphertext (hex): ").strip()
+        ciphertext1 = bytes.fromhex(ciphertext1_hex)
+        ciphertext2 = bytes.fromhex(ciphertext2_hex)
+        key_guess = None  # Reset key if new ciphertexts are entered
+
+    # Compute XOR of both ciphertexts (removes key)
+    xored_ciphertexts = xor_bytes(ciphertext1, ciphertext2)
+    print("\nCiphertext1 ⊕ Ciphertext2:", xored_ciphertexts.hex())
+
+    # If key was reset, prompt for a new one
+    if key_guess is None:
+        key_input = input("\nEnter the key (leave empty if unknown): ").strip()
+        key_guess = bytearray(key_input.encode().ljust(len(ciphertext1), b"."))  # Pad with dots
+
+    while True:
+        print("\n🔹 **Step 1: Recover Plaintext for Ciphertext 1**")
+        while True:
+            print("\nCurrent Key Guess:", key_guess.decode(errors="ignore"))
+            plaintext1 = decrypt_with_key(ciphertext1, key_guess)
+            print("\nDecryption Attempt for Ciphertext 1:")
+            print("Plaintext 1:", plaintext1)
+
+            guess = input("\nEnter guessed plaintext fragment for Ciphertext 1 (or 'done' to proceed to Ciphertext 2): ").strip()
+            if guess.lower() == "done":
+                break
+
+            extracted_key_part = xor_bytes(ciphertext1[:len(guess)], guess.encode())
+            key_guess[:len(extracted_key_part)] = extracted_key_part
+            print("\nUpdated Key Guess:", key_guess.decode(errors="ignore"))
+
+        print("\n🔹 **Step 2: Recover Plaintext for Ciphertext 2**")
+        while True:
+            print("\nCurrent Key Guess:", key_guess.decode(errors="ignore"))
+            plaintext2 = decrypt_with_key(ciphertext2, key_guess)
+            print("\nDecryption Attempt for Ciphertext 2:")
+            print("Plaintext 2:", plaintext2)
+
+            guess = input("\nEnter guessed plaintext fragment for Ciphertext 2 (or 'done' to stop): ").strip()
+            if guess.lower() == "done":
+                break
+
+            extracted_key_part = xor_bytes(ciphertext2[:len(guess)], guess.encode())
+            key_guess[:len(extracted_key_part)] = extracted_key_part
+            print("\nUpdated Key Guess:", key_guess.decode(errors="ignore"))
+
+        # Display final results
+        print("\n✅ **Final Decryption Results:**")
+        print("Recovered Key:", key_guess.decode(errors="ignore"))
+        print("Plaintext 1:", decrypt_with_key(ciphertext1, key_guess))
+        print("Plaintext 2:", decrypt_with_key(ciphertext2, key_guess))
+
+        # Ask if user wants to modify the key before restart
+        modify_key = input("\nDo you want to modify the key? (yes/no): ").strip().lower()
+        if modify_key == "yes":
+            key_input = input("Enter the modified key: ").strip()
+            key_guess = bytearray(key_input.encode().ljust(len(ciphertext1), b"."))  # Pad with dots
+            print("\nUpdated Key Successfully!")
+
+        # Ask if they want to restart with new ciphertexts, keep the same ones, or exit
+        restart = input("\nDo you want to restart with new ciphertexts, keep the same ones, or exit? (new/same/exit): ").strip().lower()
+        if restart == "exit":
+            print("\n🎉 **Decryption Complete!** Exiting program.")
+            sys.exit()
+        elif restart == "same":
+            start_xor_decryption(same_ciphertexts=True)  # Continue refining the same ciphertexts
+        elif restart == "new":
+            start_xor_decryption(same_ciphertexts=False)  # Restart with new inputs
+
+# Start the program
+ciphertext1 = None
+ciphertext2 = None
+key_guess = None
+
+start_xor_decryption()  # Initial call to start the decryption process
+
+*********************
+From doing this excercise, we were able to proof that the two-time pad is breakable when using same key and that the longer the key, the trickier the get the key.
+
+
+
+
+
