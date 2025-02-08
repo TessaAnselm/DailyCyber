@@ -194,6 +194,17 @@ start_xor_decryption()  # Initial call to start the decryption process
 *********************
 From doing this excercise, we were able to proof that the two-time pad is breakable when using same key and that the longer the key, the trickier the get the key.
 
+Here's Result for 105.2:
+✅ **Final Decryption Results:**
+Recovered Key: The quick brown fox
+Plaintext 1: Never give up!
+Plaintext 2: You'll never win!
+
+Here's Result for 105.3:
+✅ **Final Decryption Results:**
+Recovered Key: When in the course of human events
+Plaintext 1: Don't use sentence for the key.   
+Plaintext 2: People might see the flag: DRAGME 
 
 
 
