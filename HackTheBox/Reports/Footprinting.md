@@ -39,11 +39,11 @@
 1. **FTP Enumeration on Port 2121**  
    Initial enumeration revealed a non-standard FTP port. Connecting revealed accessible directories.  
    `ftp 10.129.185.174 2121`  
-   ![](_resources/f50e5c4cdb4f4cb6bd19b2eb3e30e38b)
+   ![](_resources/f50e5c4cdb4f4cb6bd19b2eb3e30e38b.png)
 
 2. **Private SSH Key Discovered**  
    Navigated to `.ssh` and downloaded `id_rsa`.  
-   ![](_resources/bbd866062cff41cab9e264d715e86d14)
+   ![](_resources/bbd866062cff41cab9e264d715e86d14.png)
 
 3. **SSH Access as `ceil` & Flag Discovery**  
    Used downloaded key for login and searched for flags.  
