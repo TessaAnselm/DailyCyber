@@ -94,12 +94,17 @@
 ![](_resources/e9532cea62634b337e6f92ebbd3ec81c.png)
 
 5. **Found `important.txt` with more creds**  
-![](_resources/e9c862f40507d10193177453e530f900.png)  
+![](_resources/e9c862f40507d10193177453e530f900.png)
+Contents of `important.txt`
 ![](_resources/885088f9a959ec76f237fd530e9cc7fc.png)
 
-6. **RDP and SQL Login via SSMS**  
-![](_resources/520abed45a1d0675f6f7c69d13025c01.png)  
-![](_resources/954fe4d87317a0d1b02bffceec779dbe.png)  
+6. **RDP and SQL Login via SSMS using terminal **  
+![](_resources/520abed45a1d0675f6f7c69d13025c01.png)
+
+8. **RDP and SQL Login via SSMS GUI**: Right click  
+![](_resources/954fe4d87317a0d1b02bffceec779dbe.png)
+
+7. **RDP and SQL Login via SSMS GUI**  
 ![](_resources/b299db635642070e44eb236ef743b7c1.png)
 
 ---
