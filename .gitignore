@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Sensitive / output files
+*.log
+*.pcap
+*.cap
+secrets.txt
+creds.txt
+*.key
+*.pem
+
+# Compiled binaries
+*.exe
+*.out
+*.o

@@ -1,10 +1,38 @@
-## Hi there 👋
+# DailyCyber 🔐
 
-<!--
-- 🔭 This repo is daily stuff explored in cybersecurity.
-- 🌱 I’be been exploring cybersecurity for over 2 years and decided to journal content reviewed.
-- 👯 I’m always open to collaborate on cybersecurity projects, pentesting or solve CPT together.
-- 🤔 Cyber Exposure: CPTC, CCDC, NCL (Diamond since 2024), TryHackMe (Top 2%), Mitre ECTF
-- 📫 How to reach me: https://www.linkedin.com/in/tessa-anselm
-- ⚡ Certification: CompTIA SecurityX/ CASP+, CompTIA Security+, AWS Cloud Practitioner, ISC2 CC, Microsoft Azure, BSEE
--->
+A personal cybersecurity learning journal — notes, walkthroughs, and practice work organized by topic. Updated regularly as I work through labs, challenges, and courses.
+
+---
+
+## 📁 Structure
+
+| Folder | Description |
+|---|---|
+| `AI/` | Notes and research on AI security topics |
+| `Application/` | Application security concepts and practice |
+| `Cryptography/` | Cryptography fundamentals and challenges |
+| `Exploitation/` | Exploitation techniques and practice |
+| `HackTheBox/Reports/` | Write-ups and reports from HackTheBox machines |
+| `OWASP/` | Notes based on the OWASP Top 10 |
+| `SOC/BlackHills/` | SOC training notes from Black Hills Information Security |
+| `Walkthrough/` | Step-by-step walkthroughs for CTFs and labs |
+
+---
+
+## 🛠 Platforms & Resources
+
+- [HackTheBox](https://www.hackthebox.com/)
+- [OWASP](https://owasp.org/)
+- [Black Hills Information Security](https://www.blackhillsinfosec.com/)
+
+---
+
+## 📌 Goals
+
+- Build a daily habit of hands-on cybersecurity practice
+- Document learnings in a way that's useful to revisit
+- Work toward certifications (e.g. OSCP, CEH, CompTIA Security+)
+
+---
+
+*Work in progress — content is added as I learn.*
