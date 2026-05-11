@@ -1,6 +1,6 @@
 # DailyCyber 🔐
 
-A personal cybersecurity learning journal — notes, walkthroughs, and practice work organized by topic. Updated regularly as I work through labs, challenges, and courses.
+A personal cybersecurity learning journal — notes, walkthroughs, and practice work organized by topic. Intermittent add as of 2025.
 
 ---
 
