@@ -31,7 +31,7 @@ A personal cybersecurity learning journal — notes, walkthroughs, and practice 
 
 - Build a daily habit of hands-on cybersecurity practice
 - Document learnings in a way that's useful to revisit
-- Work toward certifications (e.g. OSCP, CEH, CompTIA Security+)
+- Work toward certifications (e.g. OSCP, CEH, CompTIA Pentest+)
 
 ---
 
